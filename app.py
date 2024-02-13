@@ -1,5 +1,4 @@
-import nltk
-import random
+from flask import Flask, render_template, request
 from nltk.chat.util import Chat, reflections
 
 # Define responses for the chatbot
@@ -20,17 +19,17 @@ patterns = [
 # Create a chatbot using NLTK's Chat class
 chatbot = Chat(patterns, responses)
 
-# Define main function to interact with the chatbot
-def main():
-    print("Welcome! Type 'quit' to exit.")
-    while True:
-        user_input = input("You: ").lower()
-        if user_input == 'quit':
-            print("Goodbye!")
-            break
-        response = chatbot.respond(user_input)
-        print("Bot:", response)
+app = Flask(__name__)
 
-# Run the main function
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/get_response', methods=['POST'])
+def get_response():
+    user_input = request.form['user_input']
+    response = chatbot.respond(user_input)
+    return response
+
 if __name__ == "__main__":
-    main()
+    app.run(debug=True)
